@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';  // Optional: add any global styles here
+import './index.css';  
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -11,5 +11,5 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// Optional: measure and log performance, useful during development
+// measure and log performance
 reportWebVitals();

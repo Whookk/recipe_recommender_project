@@ -16,11 +16,11 @@ app.config.from_object(Config)
 # Підключаємо базу даних
 db.init_app(app)
 
-# Реєструємо маршрути
+
 register_routes(app)
 
-# Запуск додатку
+
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Створюємо таблиці, якщо вони ще не існують
+        db.create_all()  
     app.run(debug=True)

@@ -16,7 +16,7 @@ const Recommendations = () => {
             const response = await axios.post("http://127.0.0.1:5000/api/recommendations", {
                 ingredients: selectedIngredients,
             });
-            setRecipes(response.data); // Зберігаємо список рецептів
+            setRecipes(response.data); // Зберігання список рецептів
         } catch (err) {
             if (err.response) {
                 setError(err.response.data.message); // Виведення повідомлення від сервера

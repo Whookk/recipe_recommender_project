@@ -31,7 +31,7 @@ function App() {
             }
         } catch (error) {
             console.error("Error fetching recommendations:", error);
-            setError('An error occurred while fetching recommendations.');
+            setError('There are no recipes found whith provided ingredients.');
         } finally {
             setLoading(false);
         }

@@ -2,6 +2,8 @@
 from flask import request, jsonify
 from models import db, RecipeIngredient, Ingredient, Recipe, Cuisine
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
+from sqlalchemy.orm import aliased
 #from flask_jwt_extended import create_access_token, jwt_required, JWTManager
 
 
@@ -16,12 +18,24 @@ def register_routes(app):
             return jsonify({'error': 'No ingredients provided'}), 400
 
        
-        recipes = (Recipe.query
-    .join(RecipeIngredient, Recipe.recipe_id == RecipeIngredient.recipe_id)
+        subquery = (
+    RecipeIngredient.query
     .join(Ingredient, RecipeIngredient.ingredient_id == Ingredient.ingredient_id)
-    .filter(Ingredient.ingredient_name.ilike(f"%{ingredients[0]}%"))  
-    .options(joinedload(Recipe.ingredients))  
-    .all())
+    .filter(Ingredient.ingredient_name.in_(ingredients))  
+    .with_entities(RecipeIngredient.recipe_id, func.count(Ingredient.ingredient_id).label("match_count"))
+    .group_by(RecipeIngredient.recipe_id)
+    .subquery()
+)
+
+# Основний запит для вибору рецептів
+        recipes = (
+    Recipe.query
+    .join(subquery, Recipe.recipe_id == subquery.c.recipe_id)
+    .filter(subquery.c.match_count == len(ingredients))  # Перевіряємо, чи всі інгредієнти є в рецепті
+    .options(joinedload(Recipe.ingredients))  # Завантажуємо всі інгредієнти для кожного рецепту
+    .all()
+)
+
         if not recipes:
             return jsonify({"message": "No recipes found for the provided ingredients"}), 404
         

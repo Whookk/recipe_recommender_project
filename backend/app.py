@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-# Імпортуємо модулі
+
 from config import Config
 from models import db
 from routes import register_routes

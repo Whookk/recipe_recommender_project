@@ -2,7 +2,7 @@
 from flask import request, jsonify
 from models import db, RecipeIngredient, Ingredient, Recipe, Cuisine
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
+from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import aliased
 #from flask_jwt_extended import create_access_token, jwt_required, JWTManager
 
@@ -21,7 +21,7 @@ def register_routes(app):
         subquery = (
     RecipeIngredient.query
     .join(Ingredient, RecipeIngredient.ingredient_id == Ingredient.ingredient_id)
-    .filter(Ingredient.ingredient_name.in_(ingredients))  
+    .filter(or_(*[Ingredient.ingredient_name.ilike(f"%{ingredient}%") for ingredient in ingredients]))  
     .with_entities(RecipeIngredient.recipe_id, func.count(Ingredient.ingredient_id).label("match_count"))
     .group_by(RecipeIngredient.recipe_id)
     .subquery()
